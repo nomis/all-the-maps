@@ -36,17 +36,31 @@
 
 		<div id="find" class="page">
 			<h1>Find me</h1>
-			<p>Not implemented</p>
+			<p>
+				<span id="status">Loading</span><br>
+				<span id="details" style="visibility: hidden">
+				<br>
+				Latitude: <span id="geo_lat">?</span><br>
+				Longitude: <span id="geo_lon">?</span><br>
+				Accuracy: <span id="geo_acc">?</span>m<br>
+				</span>
+				<span id="updated" style="visibility: hidden">
+				<br>
+				Last updated: <span id="when">?</span>s ago
+				</span>
+			</p>
 			<nav>
 				<ul>
 					<li><a href="#">Enter location</a></li>
+					<li><a id="use" href="javascript:use_location()" style="visibility: hidden">Use location</a></li>
+					<li><a id="retry" href="javascript:geo_restart(true)" style="visibility: hidden">Retry</a></li>
 				</ul>
 			</nav>
 		</div>
 
 		<div id="location" class="page">
 			<h1>Location</h1>
-			<p><span id="lat_long">0, 0</span></p>
+			<p><span id="lat_long">?, ?</span></p>
 			<nav>
 				<ul>
 					<li><a id="osm"><img height="96px" src="/Openstreetmap_logo.svg" alt="OpenStreetMap"></a></li>
@@ -79,6 +93,16 @@
 		const any_lat_long = /[^0-9-]*(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9-]+(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9]*/;
 		const strict_lat_long = /^#(-?[1-9]*[0-9]+(?:\.[0-9]+)?,-?[1-9]*[0-9]+(?:\.[0-9]+)?)$/;
 
+		var geo_handler = undefined;
+		var geo_options = {
+			enableHighAccuracy: true,
+			timeout: 30000,
+			maximumAge: 0,
+		};
+		var geo_retry = undefined;
+		var geo_time = undefined;
+		var geo_timer = undefined;
+
 		function goto_location() {
 			var match = document.getElementById("input").value.match(any_lat_long);
 			if (match) {
@@ -89,6 +113,10 @@
 		function update_location() {
 			if (window.location.search != "") {
 				window.location.search = "";
+			}
+
+			if (window.location.hash != "#find") {
+				geo_stop(true);
 			}
 
 			var match = location.hash.match(/^#(-?[1-9]*[0-9]+(?:\.[0-9]+)?),(-?[1-9]*[0-9]+(?:\.[0-9]+)?)(?:@([2-9]|1[0-9]|2[01]))?$/);
@@ -117,7 +145,13 @@
 				document.getElementById("start").style = "";
 				document.getElementById("title").innerText = "All The Maps";
 
-				focus_location();
+				if (window.location.hash == "" || window.location.hash == "#") {
+					focus_location();
+				} else if (window.location.hash == "#find") {
+					if (geo_handler == undefined) {
+						geo_restart(true);
+					}
+				}
 			}
 		}
 
@@ -135,6 +169,133 @@
 
 		function focus_location() {
 			document.getElementById("input").focus();
+		}
+
+		function geo_restart(clear) {
+			geo_stop(true);
+
+			if (window.location.hash != "#find") {
+				return;
+			}
+
+			document.getElementById("details").style = "visibility: hidden";
+			document.getElementById("geo_lat").innerText = "?";
+			document.getElementById("geo_lon").innerText = "?";
+			document.getElementById("geo_acc").innerText = "?";
+
+			if (clear) {
+				document.getElementById("updated").style = "visibility: hidden";
+				document.getElementById("when").innerText = "?";
+			}
+
+			document.getElementById("retry").style = "visibility: hidden";
+			document.getElementById("use").style = "visibility: hidden";
+
+			if (navigator.geolocation) {
+				document.getElementById("status").innerText = "Waiting for location";
+				geo_updated(false);
+
+				geo_handler = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
+			} else {
+				geo_unavailable();
+			}
+		}
+
+		function geo_updated(available) {
+			if (geo_timer != undefined) {
+				clearInterval(geo_timer);
+			}
+
+			if (available) {
+				document.getElementById("details").style = "";
+				document.getElementById("retry").style = "visibility: hidden";
+				document.getElementById("use").style = "";
+			} else {
+				document.getElementById("details").style = "visibility: hidden";
+				document.getElementById("retry").style = "";
+				document.getElementById("use").style = "visibility: hidden";
+			}
+
+			geo_time = Date.now();
+			geo_relative_time();
+			geo_timer = setInterval(geo_relative_time, 500);
+		}
+
+		function geo_relative_time() {
+			document.getElementById("updated").style = "";
+			document.getElementById("when").innerText = `${Math.round((Date.now() - geo_time) / 1000)}`;
+		}
+
+		function geo_success(pos) {
+			document.getElementById("status").innerText = "Location found";
+
+			document.getElementById("geo_lat").innerText = `${pos.coords.latitude}`;
+			document.getElementById("geo_lon").innerText = `${pos.coords.longitude}`;
+			document.getElementById("geo_acc").innerText = `${pos.coords.accuracy.toFixed(2)}`;
+
+			geo_updated(true);
+		}
+
+		function geo_error(err) {
+			var message = "Unknown error";
+			var failed = false;
+
+			if (err.code == err.PERMISSION_DENIED) {
+				message = "Permission denied (you need to allow this website to access your location)";
+				failed = true;
+			} else if (err.code == err.POSITION_UNAVAILABLE) {
+				message = "Position unavailable";
+			} else if (err.code == err.TIMEOUT) {
+				message = "Timeout occurred";
+			} else {
+				failed = true;
+			}
+
+			document.getElementById("status").innerText = message;
+			geo_updated(false);
+
+			if (failed) {
+				geo_stop(false);
+			} else {
+				geo_stop(false);
+				geo_retry = setTimeout(geo_auto_restart, 3000);
+			}
+		}
+
+		function geo_unavailable() {
+			document.getElementById("status").innerText = "Location not supported";
+			geo_updated(false);
+		}
+
+		function geo_stop(all) {
+			if (geo_handler != undefined) {
+				navigator.geolocation.clearWatch(geo_handler);
+				geo_handler = undefined;
+			}
+
+			if (geo_retry != undefined) {
+				clearTimeout(geo_retry);
+				geo_retry = undefined;
+			}
+
+			if (all) {
+				if (geo_timer != undefined) {
+					clearInterval(geo_timer);
+					geo_timer = undefined;
+				}
+			}
+		}
+
+		function geo_auto_restart() {
+			geo_restart(false);
+		}
+
+		function use_location() {
+			var lat = document.getElementById("geo_lat").innerText;
+			var lon = document.getElementById("geo_lon").innerText;
+
+			document.getElementById("input").value = `${lat},${lon}`;
+			goto_location();
 		}
 
 		window.onload = update_location;
