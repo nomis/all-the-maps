@@ -44,17 +44,17 @@
 			<p>
 				<span id="status">Loading</span><br>
 				<span id="attempt" style="visibility: hidden">
-				Last attempt: <span id="when_attempt">?</span>s ago<br>
+					<span id="when_attempt">Last attempt: ?s ago</span><br>
 				</span>
 				<span id="details" style="visibility: hidden">
-				<br>
-				Latitude: <span id="geo_lat">?</span><br>
-				Longitude: <span id="geo_lon">?</span><br>
-				Accuracy: ±<span id="geo_acc">?</span>m<br>
+					<br>
+					Latitude: <span id="geo_lat">?</span><br>
+					Longitude: <span id="geo_lon">?</span><br>
+					Accuracy: ±<span id="geo_acc">?</span>m<br>
 				</span>
 				<span id="updated" style="visibility: hidden">
-				<br>
-				Last updated: <span id="when_updated">?</span>s ago<br>
+					<br>
+					Last updated: <span id="when_updated">?</span>s ago<br>
 				</span>
 			</p>
 			<nav>
@@ -141,6 +141,7 @@
 		var geo_retry = undefined;
 		var geo_time_u = undefined;
 		var geo_time_a = undefined;
+		var geo_time_w = undefined;
 		var geo_timer = undefined;
 
 		function goto_location() {
@@ -232,7 +233,9 @@
 			retry.style = "";
 
 			if (navigator.geolocation) {
-				document.getElementById("status").innerText = "⏳ Waiting for location";
+				document.getElementById("status").innerText = "⏳ Requesting your location";
+				geo_time_w = Date.now();
+				geo_relative_timer();
 
 				geo_handler = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
 			} else {
@@ -258,6 +261,7 @@
 			}
 
 			retry.style = "";
+			geo_time_w = undefined;
 			geo_relative_timer();
 		}
 
@@ -272,15 +276,18 @@
 
 		function geo_relative_time() {
 			if (geo_time_u != undefined) {
-				document.getElementById("updated").style = "";
 				document.getElementById("when_updated").innerText = `${Math.round((Date.now() - geo_time_u) / 1000)}`;
+				document.getElementById("updated").style = "";
 			} else {
 				document.getElementById("updated").style = "visibility: hidden";
 			}
 
-			if (geo_time_a != undefined) {
+			if (geo_time_w != undefined) {
+				document.getElementById("when_attempt").innerText = `Waiting for: ${Math.round((Date.now() - geo_time_w) / 1000)}s`;
 				document.getElementById("attempt").style = "";
-				document.getElementById("when_attempt").innerText = `${Math.round((Date.now() - geo_time_a) / 1000)}`;
+			} else if (geo_time_a != undefined) {
+				document.getElementById("when_attempt").innerText = `Last attempt: ${Math.round((Date.now() - geo_time_a) / 1000)}s ago`;
+				document.getElementById("attempt").style = "";
 			} else {
 				document.getElementById("attempt").style = "visibility: hidden";
 			}
@@ -346,6 +353,7 @@
 				}
 
 				document.getElementById("attempt").style = "visibility: hidden";
+				geo_time_w = undefined;
 			}
 		}
 
