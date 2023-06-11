@@ -31,6 +31,8 @@
 		input { font-size: large; }
 		.statements p { display: block !important; font-size: small !important; }
 		.source { margin-left: 2em; }
+		.button { background-color: #fff; color: #000; text-decoration: none; }
+		.sans { font-family: sans-serif; }
 		</style>
 	</head>
 	<body>
@@ -67,11 +69,11 @@
 			<p><span id="lat_long">?, ?</span></p>
 			<nav>
 				<ul>
-					<li><a id="osm"><img height="96px" src="/Openstreetmap_logo.svg" alt="OpenStreetMap"></a></li>
-					<li><a id="android"><img height="96px" src="/Android_robot.svg" alt="Android App"></a></li>
-					<li><a id="google"><img width="96px" src="/Google_Maps_logo_2020.svg" alt="Google Maps"></a></li>
-					<li><a id="apple"><img height="48px" src="/Apple_Maps_logo.svg" alt="Apple Maps"></a></li>
-					<li><a id="geohack"><img height="96px" src="/Wikimedia_Cloud_Services_logo_with_text.svg" alt="Wikimedia Cloud Services"><br>GeoHack</a></li>
+					<li><a id="osm" class="button"><img height="96px" src="/Openstreetmap_logo.svg" alt="OpenStreetMap"></a></li>
+					<li><a id="android" class="button"><img height="96px" src="/Android_robot.svg" alt="Android App"></a></li>
+					<li><a id="google" class="button"><img width="96px" src="/Google_Maps_logo_2020.svg" alt="Google Maps"></a></li>
+					<li><a id="apple" class="button"><img height="48px" src="/Apple_Maps_logo.svg" alt="Apple Maps"></a></li>
+					<li><a id="geohack" class="button"><img height="96px" src="/Wikimedia_Cloud_Services_logo_with_text.svg" alt="Wikimedia Cloud Services"><br><span class="sans">GeoHack</span></a></li>
 					<hr>
 					<li><a href="javascript:reset_location()">Change location</a></li>
 					<li><a href="javascript:copy_location()"">Copy to clipboard</a></li>
