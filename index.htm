@@ -122,6 +122,11 @@
 					placeholder="latitude,longitude" autocomplete="on" autofocus required
 					pattern="[^0-9-]*(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9-]+(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9]*">
 				<input type="submit" value="Go">
+				<!--
+					Keep vertical content below the text input element to the absolute minimum
+					because the web browser may try and scroll down until it's at the top of
+					the screen when focusing on it, hiding everything above the input box.
+				-->
 				<br><br><br>
 				<input type="reset" value="Clear">
 				<a class="source" href="https://github.com/nomis/all-the-maps">Source code</a>
