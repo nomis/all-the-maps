@@ -232,7 +232,7 @@
 			retry.style = "";
 
 			if (navigator.geolocation) {
-				document.getElementById("status").innerText = "Waiting for location";
+				document.getElementById("status").innerText = "⏳ Waiting for location";
 
 				geo_handler = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
 			} else {
@@ -287,7 +287,7 @@
 		}
 
 		function geo_success(pos) {
-			document.getElementById("status").innerText = "Location found";
+			document.getElementById("status").innerText = "✅ Location found";
 
 			document.getElementById("geo_lat").innerText = `${pos.coords.latitude}`;
 			document.getElementById("geo_lon").innerText = `${pos.coords.longitude}`;
@@ -297,18 +297,18 @@
 		}
 
 		function geo_error(err) {
-			var message = "Unknown error";
+			var message = "⚠️ Unknown error";
 			var failed = false;
 
 			if (err.code == err.PERMISSION_DENIED) {
-				message = "Permission denied (you need to allow this website to access your location)";
+				message = "🚫 Permission denied (you need to allow this website to access your location)";
 				failed = true;
 			} else if (err.code == err.POSITION_UNAVAILABLE) {
-				message = "Location unavailable";
+				message = "❌ Location unavailable";
 			} else if (err.code == err.TIMEOUT) {
-				message = "Timeout occurred";
+				message = "⚠️ Timeout occurred";
 			} else {
-				message = `Unknown error ${err.code}`;
+				message = `⚠️ Unknown error ${err.code}`;
 				failed = true;
 			}
 
@@ -324,7 +324,7 @@
 		}
 
 		function geo_unavailable() {
-			document.getElementById("status").innerText = "Location not supported";
+			document.getElementById("status").innerText = "🛑 Location not supported";
 			geo_updated(false);
 		}
 
