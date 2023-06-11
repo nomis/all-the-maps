@@ -40,9 +40,12 @@
 		<noscript>I don't like JavaScript either but it's the only way to get your location and avoid transmitting locations to the webserver.</noscript>
 
 		<div id="find" class="page">
-			<h1>🔍 Current Location</h1>
+			<h1>Current Location</h1>
 			<p>
 				<span id="status">Loading</span><br>
+				<span id="attempt" style="visibility: hidden">
+				Last attempt: <span id="when_attempt">?</span>s ago<br>
+				</span>
 				<span id="details" style="visibility: hidden">
 				<br>
 				Latitude: <span id="geo_lat">?</span><br>
@@ -51,18 +54,18 @@
 				</span>
 				<span id="updated" style="visibility: hidden">
 				<br>
-				Last updated: <span id="when">?</span>s ago<br>
+				Last updated: <span id="when_updated">?</span>s ago<br>
 				</span>
-				<br>
-				Location information is only used within your web browser to create links that you distribute.
 			</p>
 			<nav>
 				<ul>
-					<li><a href="#">Enter location</a></li>
+					<li><a href="#" title="Enter location">Manual entry</a></li>
 					<li><a id="use" href="javascript:use_location()" style="visibility: hidden">Use location</a></li>
-					<li><a id="retry" href="javascript:geo_restart(true)" style="visibility: hidden">Retry</a></li>
+					<li><a id="retry" href="javascript:geo_restart()" style="visibility: hidden">Retry</a></li>
 				</ul>
 			</nav>
+			<p>Location information is only used within your web browser to create links that you distribute.</p>
+			<p>The location is refreshed automatically by your web browser whenever it changes.</p>
 		</div>
 
 		<div id="location" class="page">
@@ -136,7 +139,8 @@
 			maximumAge: 0,
 		};
 		var geo_retry = undefined;
-		var geo_time = undefined;
+		var geo_time_u = undefined;
+		var geo_time_a = undefined;
 		var geo_timer = undefined;
 
 		function goto_location() {
@@ -185,7 +189,11 @@
 					focus_location();
 				} else if (window.location.hash == "#find") {
 					if (geo_handler == undefined) {
-						geo_restart(true);
+						geo_restart();
+					}
+
+					if (geo_timer == undefined && (geo_time_u != undefined || geo_time_a != undefined)) {
+						geo_relative_timer();
 					}
 				}
 			}
@@ -211,29 +219,20 @@
 			document.getElementById("input").focus();
 		}
 
-		function geo_restart(clear) {
+		function geo_restart() {
 			geo_stop(true);
 
 			if (window.location.hash != "#find") {
 				return;
 			}
 
-			document.getElementById("details").style = "visibility: hidden";
-			document.getElementById("geo_lat").innerText = "?";
-			document.getElementById("geo_lon").innerText = "?";
-			document.getElementById("geo_acc").innerText = "?";
+			var retry = document.getElementById("retry");
 
-			if (clear) {
-				document.getElementById("updated").style = "visibility: hidden";
-				document.getElementById("when").innerText = "?";
-			}
-
-			document.getElementById("retry").style = "visibility: hidden";
-			document.getElementById("use").style = "visibility: hidden";
+			retry.innerText = "Retry";
+			retry.style = "";
 
 			if (navigator.geolocation) {
 				document.getElementById("status").innerText = "Waiting for location";
-				geo_updated(false);
 
 				geo_handler = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
 			} else {
@@ -242,28 +241,49 @@
 		}
 
 		function geo_updated(available) {
+			var retry = document.getElementById("retry");
+
+			if (available) {
+				document.getElementById("details").style = "";
+				document.getElementById("use").style = "";
+
+				retry.innerText = "Refresh";
+
+				geo_time_u = Date.now();
+				geo_time_a = undefined;
+			} else {
+				retry.innerText = "Retry";
+
+				geo_time_a = Date.now();
+			}
+
+			retry.style = "";
+			geo_relative_timer();
+		}
+
+		function geo_relative_timer() {
 			if (geo_timer != undefined) {
 				clearInterval(geo_timer);
 			}
 
-			if (available) {
-				document.getElementById("details").style = "";
-				document.getElementById("retry").style = "visibility: hidden";
-				document.getElementById("use").style = "";
-			} else {
-				document.getElementById("details").style = "visibility: hidden";
-				document.getElementById("retry").style = "";
-				document.getElementById("use").style = "visibility: hidden";
-			}
-
-			geo_time = Date.now();
 			geo_relative_time();
 			geo_timer = setInterval(geo_relative_time, 500);
 		}
 
 		function geo_relative_time() {
-			document.getElementById("updated").style = "";
-			document.getElementById("when").innerText = `${Math.round((Date.now() - geo_time) / 1000)}`;
+			if (geo_time_u != undefined) {
+				document.getElementById("updated").style = "";
+				document.getElementById("when_updated").innerText = `${Math.round((Date.now() - geo_time_u) / 1000)}`;
+			} else {
+				document.getElementById("updated").style = "visibility: hidden";
+			}
+
+			if (geo_time_a != undefined) {
+				document.getElementById("attempt").style = "";
+				document.getElementById("when_attempt").innerText = `${Math.round((Date.now() - geo_time_a) / 1000)}`;
+			} else {
+				document.getElementById("attempt").style = "visibility: hidden";
+			}
 		}
 
 		function geo_success(pos) {
@@ -284,7 +304,7 @@
 				message = "Permission denied (you need to allow this website to access your location)";
 				failed = true;
 			} else if (err.code == err.POSITION_UNAVAILABLE) {
-				message = "Position unavailable";
+				message = "Location unavailable";
 			} else if (err.code == err.TIMEOUT) {
 				message = "Timeout occurred";
 			} else {
@@ -299,7 +319,7 @@
 				geo_stop(false);
 			} else {
 				geo_stop(false);
-				geo_retry = setTimeout(geo_auto_restart, 3000);
+				geo_retry = setTimeout(geo_restart, 3000);
 			}
 		}
 
@@ -324,11 +344,9 @@
 					clearInterval(geo_timer);
 					geo_timer = undefined;
 				}
-			}
-		}
 
-		function geo_auto_restart() {
-			geo_restart(false);
+				document.getElementById("attempt").style = "visibility: hidden";
+			}
 		}
 
 		function use_location() {
