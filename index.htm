@@ -269,6 +269,7 @@
 			} else if (err.code == err.TIMEOUT) {
 				message = "Timeout occurred";
 			} else {
+				message = `Unknown error ${err.code}`;
 				failed = true;
 			}
 
