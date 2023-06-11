@@ -33,6 +33,7 @@
 		.source { margin-left: 2em; }
 		.button { background-color: #fff; color: #000; text-decoration: none; }
 		.sans { font-family: sans-serif; }
+		.emoji { font-size: 64px; vertical-align: bottom; }
 		</style>
 	</head>
 	<body>
@@ -75,9 +76,10 @@
 					<li><a id="apple" class="button"><img height="48px" src="/Apple_Maps_logo.svg" alt="Apple Maps"></a></li>
 					<li><a id="geohack" class="button"><img height="96px" src="/Wikimedia_Cloud_Services_logo_with_text.svg"
 						alt="Wikimedia Cloud Services"><br><span class="sans">GeoHack</span></a></li>
+					<li><a id="clipboard" class="button" href="javascript:copy_location()"><span class="emoji">📋</span></a></li>
 					<hr>
 					<li><a href="javascript:reset_location()">Change location</a></li>
-					<li><a href="javascript:copy_location()">Copy to clipboard</a></li>
+					<li><a href="javascript:copy_url()">Copy to clipboard</a></li>
 				</ul>
 			</nav>
 			<hr>
@@ -195,8 +197,12 @@
 			}
 		}
 
-		function copy_location() {
+		function copy_url() {
 			navigator.clipboard.writeText(window.location.href);
+		}
+
+		function copy_location() {
+			navigator.clipboard.writeText(document.getElementById("input").value);
 		}
 
 		function focus_location() {
