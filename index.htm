@@ -120,7 +120,7 @@
 			<h2>Enter <label for="location">Location</label></h2>
 				<input id="input" type="text" name="location" size="20"
 					placeholder="latitude,longitude" autocomplete="on" autofocus required
-					pattern="[^0-9-]*(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9-]+(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9]*">
+					pattern="[^0-9-]*(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9.-]+(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9]*">
 				<input type="submit" value="Go">
 				<!--
 					Keep vertical content below the text input element to the absolute minimum
@@ -134,7 +134,7 @@
 		</div>
 
 		<script type="text/javascript">//<![CDATA[
-		const any_lat_long = /[^0-9-]*(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9-]+(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9]*/;
+		const any_lat_long = /[^0-9-]*(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9.-]+(-?[1-9]*[0-9]+(?:\.[0-9]+)?)[^0-9]*/;
 		const strict_lat_long = /^#(-?[1-9]*[0-9]+(?:\.[0-9]+)?,-?[1-9]*[0-9]+(?:\.[0-9]+)?)$/;
 
 		var geo_handler = undefined;
