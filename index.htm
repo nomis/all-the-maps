@@ -302,12 +302,16 @@
 			}
 		}
 
+		function round_num(value, digits) {
+			return value.toLocaleString("en", {minimumFractionDigits: 1, maximumFractionDigits: digits, useGrouping: false})
+		}
+
 		function geo_success(pos) {
 			document.getElementById("status").innerText = "✅ Location found";
 
-			document.getElementById("geo_lat").innerText = `${pos.coords.latitude}`;
-			document.getElementById("geo_lon").innerText = `${pos.coords.longitude}`;
-			document.getElementById("geo_acc").innerText = `${pos.coords.accuracy.toFixed(2)}`;
+			document.getElementById("geo_lat").innerText = `${round_num(pos.coords.latitude, 8)}`;
+			document.getElementById("geo_lon").innerText = `${round_num(pos.coords.longitude, 8)}`;
+			document.getElementById("geo_acc").innerText = `${round_num(pos.coords.accuracy, 2)}`;
 
 			geo_updated(true);
 		}
