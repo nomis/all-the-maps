@@ -76,6 +76,7 @@
 					<li><a id="android" class="button" title="Open in Android App"><img style="min-width: 81px" height="96px" src="Android_robot.svg" alt="Android App"></a></li>
 					<li><a id="google" class="button" title="Google Maps"><img width="96px" style="min-height: 86px" src="Google_Maps_logo_2020.svg" alt="Google Maps"></a></li>
 					<li><a id="apple" class="button" title="Apple Maps"><img style="min-width: 157px" height="48px" src="Apple_Maps_logo.svg" alt="Apple Maps"></a></li>
+					<li><a id="citymapper" class="button" title="Citymapper"><img width="96px" height="96px" src="Citymapper_logo.svg" alt="Citymapper"></a></li>
 					<li><a id="geohack" class="button" title="Wikimedia GeoHack"><img style="min-width: 83px" height="96px" src="Wikimedia_Cloud_Services_logo_with_text.svg"
 						alt="Wikimedia Cloud Services"></a></li>
 					<li><a id="clipboard" class="button" href="javascript:copy_location()" title="Copy location to clipboard"><span class="emoji">📋</span></a></li>
@@ -93,6 +94,8 @@
 					This website is not endorsed by or affiliated with Google LLC.</p>
 				<p>The Apple logo and <q>Apple</q> are trademarks of <a href="https://www.apple.com/">Apple Inc.</a>, registered in the U.S. and other countries and regions.
 					This website is not endorsed by or affiliated with Apple Inc.</p>
+				<p>The Citymapper logo and <q>Citymapper</q> are trademarks of <a href="https://citymapper.com/">Citymapper Limited</a>.
+					This website is not endorsed by or affiliated with Citymapper Limited.</p>
 				<p>The Wikimedia Cloud Services logo and <q>Wikimedia</q> are trademarks of the <a href="https://wikimediafoundation.org/">Wikimedia Foundation</a>
 					and are used with the <a href="https://foundation.wikimedia.org/wiki/Policy:Trademark_policy" title="Wikimedia Foundation Trademark Policy">permission</a>
 					of the Wikimedia Foundation. This website is not endorsed by or affiliated with the Wikimedia Foundation.</p>
@@ -194,6 +197,7 @@
 				document.getElementById("android").href = `geo:0,0?z=${zoom}&q=${lat},${lon}`;
 				document.getElementById("google").href = `https://www.google.com/maps?ll=${lat},${lon}&q=${lat},${lon}&t=m&z=${zoom}`;
 				document.getElementById("apple").href = `https://maps.apple.com/?ll=${lat},${lon}&q=${lat},${lon}&t=m&z=${zoom}`;
+				document.getElementById("citymapper").href = `https://citymapper.com/directions?endcoord=${lat},${lon}&endaddress=${lat},${lon}`;
 				document.getElementById("geohack").href = `https://geohack.toolforge.org/geohack.php?language=en&params=${lat};${lon}_dim:1`;
 			} else {
 				document.getElementById("location").style = "";
