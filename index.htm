@@ -215,7 +215,7 @@
 				document.getElementById("title").innerText = `All The Maps (${lat}, ${lon})`;
 
 				document.getElementById("osm").href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=${zoom}&layers=M`;
-				document.getElementById("android").href = `geo:0,0?z=${zoom}&q=${lat},${lon}`;
+				document.getElementById("android").href = `geo:${lat},${lon}?z=${zoom}&q=${lat},${lon}(${lat},${lon})`;
 				document.getElementById("google").href = `https://www.google.com/maps?ll=${lat},${lon}&q=${lat},${lon}&t=m&z=${zoom}`;
 				document.getElementById("apple").href = `https://maps.apple.com/?ll=${lat},${lon}&q=${lat},${lon}&t=m&z=${zoom}`;
 				document.getElementById("bing").href = `https://www.bing.com/maps/?v=2&cp=${lat}~${lon}&style=r&lvl=${zoom}&where1=${lat},${lon}`;
