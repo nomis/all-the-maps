@@ -31,8 +31,24 @@
 		input { font-size: large; }
 		.statements p { display: block !important; font-size: small !important; }
 		.source { margin-left: 2em; }
-		a.button { margin: 1ex; background-color: #fff; color: #000; text-decoration: none; }
+		a.button { margin: 1ex; color: #000 !important; background-color: #FFF !important; text-decoration: none; }
 		.emoji { font-size: 64px; vertical-align: bottom; }
+
+		@media (prefers-color-scheme: light) {
+			body { color: #000; background-color: #FFF; }
+			a { color: #00E; }
+			a:visited { color: #551A8B; }
+			a:active { color: #E00; }
+			nav a { border-color: #000; }
+		}
+
+		@media (prefers-color-scheme: dark) {
+			body { color: #FBFBFE; background-color: #1C1B22; }
+			a { color: #8C8CFF; }
+			a:visited { color: #FFADFF; }
+			a:active { color: #F66; }
+			nav a { border-color: #999; }
+		}
 		</style>
 	</head>
 	<body>
