@@ -1,4 +1,3 @@
 ExpiresActive On
 ExpiresByType text/html A300
 ExpiresByType image/svg+xml A86400
-AddOutputFilterByType BROTLI_COMPRESS text/html image/svg+xml
