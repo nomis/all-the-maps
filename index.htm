@@ -215,10 +215,36 @@
 				document.getElementById("title").innerText = `All The Maps (${lat}, ${lon})`;
 
 				document.getElementById("osm").href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=${zoom}&layers=M`;
+
+				/* Android:
+				 * `geo:${lat},${lon}` is the map position (0,0 is the user's location)
+				 * `q=${lat},${lon}` is the search query (for dropped pin and directions)
+				 * `(${lat},${lon})` is the search query name
+				 */
 				document.getElementById("android").href = `geo:${lat},${lon}?z=${zoom}&q=${lat},${lon}(${lat},${lon})`;
+
+				/* Google Maps:
+				 * `ll=${lat},${lon}` is the map position
+				 * `q=${lat},${lon}&t=m&z=${zoom}` is the search query (for dropped pin and directions)
+				 */
 				document.getElementById("google").href = `https://www.google.com/maps?ll=${lat},${lon}&q=${lat},${lon}&t=m&z=${zoom}`;
+
+				/* Apple Maps:
+				 * `ll=${lat},${lon}` is the map position and dropped pin
+				 * `q=${lat},${lon}` is the name of the location
+				 * `ll=` and `q=` together will stop it redirecting to Google Maps on non-Apple devices 🙄
+				 */
 				document.getElementById("apple").href = `https://maps.apple.com/?ll=${lat},${lon}&q=${lat},${lon}&t=m&z=${zoom}`;
+
+				/* Bing Maps:
+				 * `cp=${lat}~${lon}` is the map position
+				 * `where1=${lat},${lon}` is the search query (for dropped pin and directions)
+				 */
 				document.getElementById("bing").href = `https://www.bing.com/maps/?v=2&cp=${lat}~${lon}&style=r&lvl=${zoom}&where1=${lat},${lon}`;
+
+				/* GeoHack:
+				 * `_dim:1` is the zoom level (object size in metres)
+				 */
 				document.getElementById("geohack").href = `https://geohack.toolforge.org/geohack.php?language=en&params=${lat};${lon}_dim:1`;
 			} else {
 				document.getElementById("location").style = "";
