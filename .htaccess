@@ -1,3 +1,4 @@
 ExpiresActive On
 ExpiresByType text/html A300
 ExpiresByType image/svg+xml A86400
+AddType application/manifest+json .webmanifest

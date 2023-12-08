@@ -1,0 +1,12 @@
+{
+	"name": "All The Maps",
+	"description": "Links to all the map services for a latitude/longitude location",
+	"categories": "navigation utilities",
+	"icons": [{
+		"src": "/noto-emoji_u1f5fa.svg",
+		"type": "image/svg+xml",
+		"sizes": "any"
+	}],
+	"display": "minimal-ui",
+	"start_url": "/"
+}
