@@ -2,7 +2,9 @@
 
 Web page to get the user's location, either automatically or manually, and
 provide a page that can be given to other people that links to popular map
-services for that location.
+services for that location. When the [Web Share API](https://w3c.github.io/web-share/)
+is supported the location page can be shared (also available directly from
+the "current location" view).
 
 Examples:
 * [start page](https://maps.uuid.uk/)
