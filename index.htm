@@ -31,7 +31,9 @@
 		input { font-size: large; }
 		.statements p { display: block !important; font-size: small !important; }
 		.source { margin-left: 2em; }
-		a.button { margin: 1ex; color: #000 !important; background-color: #FFF !important; text-decoration: none; }
+		a.button, a.button_t { margin: 1ex; text-decoration: none; }
+		a.button { color: #000 !important; background-color: #FFF !important; }
+		img.icon_r { padding: 0 0 0 0.5ch; margin: 0; }
 		.emoji { font-size: 64px; vertical-align: bottom; }
 
 		@media (prefers-color-scheme: light) {
@@ -77,6 +79,7 @@
 					<li><a href="#" title="Enter location">Manual entry</a></li>
 					<li><a id="use" href="javascript:use_location()" style="visibility: hidden">Use location</a></li>
 					<li><a id="retry" href="javascript:geo_restart()" style="visibility: hidden">Retry</a></li>
+					<li><a id="share_loc" href="javascript:share_location()" style="visibility: hidden">Share location<img class="icon_r" src="Material_Design_share.svg" width="16" height="16" alt=""></a></li>
 				</ul>
 			</nav>
 			<p>Location information is only used within your web browser to create links that you distribute.</p>
@@ -96,6 +99,7 @@
 						alt="Wikimedia Cloud Services"></a></li>
 					<li><a id="bing" class="button" title="Bing Maps"><img style="min-width: 118px" height="48" src="Bing_Fluent_Logo_Text.svg" alt="Bing Maps"></a></li>
 					<li><a id="clipboard" class="button" href="javascript:copy_location()" title="Copy location to clipboard"><span class="emoji">📋</span></a></li>
+					<li><a id="share_url" class="button_t" style="display: none" href="javascript:share_url()" title="Share URL"><img width="64" height="64" src="Material_Design_share.svg" alt="Share URL"></a></li>
 					<hr>
 					<li><a href="javascript:reset_location()">Change location</a></li>
 					<li><a href="javascript:copy_url()" title="Copy URL to clipboard">Copy to clipboard</a></li>
@@ -198,17 +202,11 @@
 				var acc = match[3];
 				var zoom = match[4];
 
-				if (acc == undefined) {
-					acc = "";
-				} else {
-					acc = ` ±${acc}m`;
-				}
-
 				if (zoom == undefined) {
 					zoom = "19";
 				}
 
-				document.getElementById("lat_long").innerText = `${lat}, ${lon}${acc}`;
+				document.getElementById("lat_long").innerText = make_text(lat, lon, acc);
 				document.getElementById("input").value = `${lat},${lon}`;
 				document.getElementById("start").style = "display: none;";
 				document.getElementById("location").style = "display: block";
@@ -277,6 +275,26 @@
 			navigator.clipboard.writeText(window.location.href);
 		}
 
+		async function share(url, text) {
+			const data = {
+				title: `Location (${text})`,
+				url: url,
+			};
+			if (navigator.canShare(data)) {
+				await navigator.share(data);
+			} else {
+				alert("Sharing not allowed");
+			}
+		}
+
+		function share_location() {
+			share(`${window.location.origin}${window.location.pathname}#${make_hash(true)}`, make_geo_text());
+		}
+
+		function share_url() {
+			share(window.location.href, document.getElementById("lat_long").innerText);
+		}
+
 		function copy_location() {
 			navigator.clipboard.writeText(document.getElementById("input").value);
 		}
@@ -314,6 +332,9 @@
 			if (available) {
 				document.getElementById("details").style = "";
 				document.getElementById("use").style = "";
+				if (navigator.share) {
+					document.getElementById("share_loc").style = "";
+				}
 
 				retry.innerText = "Refresh";
 
@@ -428,17 +449,45 @@
 			}
 		}
 
-		function use_location() {
+		function make_hash(with_acc) {
 			var lat = document.getElementById("geo_lat").innerText;
 			var lon = document.getElementById("geo_lon").innerText;
 			var acc = document.getElementById("geo_acc").innerText;
 
-			document.getElementById("input").value = `${lat},${lon}`;
-			window.location.hash = `${lat},${lon}~${acc}`;
+			if (with_acc) {
+				return `${lat},${lon}~${acc}`;
+			} else {
+				return `${lat},${lon}`;
+			}
+		}
+
+		function make_text(lat, lon, acc) {
+			if (acc == undefined) {
+				acc = "";
+			} else {
+				acc = ` ±${acc}m`;
+			}
+
+			return `${lat}, ${lon}${acc}`;
+		}
+
+		function make_geo_text() {
+			var lat = document.getElementById("geo_lat").innerText;
+			var lon = document.getElementById("geo_lon").innerText;
+			var acc = document.getElementById("geo_acc").innerText;
+
+			return make_text(lat, lon, acc);
+		}
+
+		function use_location() {
+			document.getElementById("input").value = make_hash(false);
+			window.location.hash = make_hash(true);
 		}
 
 		window.onload = update_location;
 		window.onhashchange = update_location;
+		document.getElementById("share_loc").style = navigator.share ? "visibility: hidden" : "display: none";
+		document.getElementById("share_url").style = navigator.share ? "" : "display: none";
 		update_location();
 		//]]></script>
 	</body>
