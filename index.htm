@@ -29,7 +29,7 @@
 		nav ul li { display: inline; }
 		nav a { display: inline-block; margin: 1ex 0 1ex 0; padding: 1ex; border: 1px solid; border-radius: 1ex; text-align: center; }
 		input { font-size: large; }
-		.statements p { display: block !important; font-size: small !important; }
+		#location .statements p { display: block; font-size: small; }
 		.source { margin-left: 2em; }
 		a.button, a.button_t { margin: 1ex; text-decoration: none; }
 		a.button { color: #000 !important; background-color: #FFF !important; }
@@ -91,6 +91,7 @@
 			<p><span id="lat_long">?, ?</span></p>
 			<nav>
 				<ul>
+					<li><a id="emf" style="display: none" class="button" title="Electromagnetic Field"><img loading="lazy" width="96" height="96" src="emf2024-logo-dark.svg" alt="Electromagnetic Field"></a></li>
 					<li><a id="osm" class="button" title="OpenStreetMap"><img width="96" height="96" src="Openstreetmap_logo.svg" alt="OpenStreetMap"></a></li>
 					<li><a id="android" class="button" title="Open in an Android application"><img style="min-width: 110px" height="96" src="Android_logo_2019_(stacked).svg" alt="Android App"></a></li>
 					<li><a id="google" class="button" title="Google Maps"><img width="96" style="min-height: 86px" src="Google_Maps_logo_2020.svg" alt="Google Maps"></a></li>
@@ -136,6 +137,10 @@
 					<a href="https://commons.wikimedia.org/wiki/User:Jorm_(WMF)" title="User:Jorm (WMF)">Brandon Harris</a> and
 					<a href="https://commons.wikimedia.org/wiki/User:Isarra" title="User:Isarra">some idiot who keeps forgetting her username</a>
 					on 2012-06-12.</p>
+				<p id="emf_credits" style="display: none">The <a href="https://www.emfcamp.org/" title="Electromagnetic Field">EMF</a> logo and style was
+					<a href="https://archive.org/details/emfcamp-2012-logo-brand" title="Electromagnetic Field 2012 Logo and Guidelines">originally designed in 2012</a>
+					by Stavros Georgakopoulos. Updated and maintained 2014-2018 by <a href="https://jakepink.uk/">Jake Howe</a>,
+					and 2020-2024 by Morag Hickman, Evelyn Greeves, and the rest of the EMF design team.</p>
 				<p><a href="https://github.com/nomis/all-the-maps">Source code</a></p>
 			</div>
 		</div>
@@ -201,9 +206,17 @@
 				var lon = match[2];
 				var acc = match[3];
 				var zoom = match[4];
+				var now = Date.now() / 1000;
+				var emf = 0;
 
 				if (zoom == undefined) {
 					zoom = "19";
+				}
+
+				if (lat >= 52.031 && lat <= 52.045 && lon >=-2.386 && lon <= -2.372) {
+					if (now >= 1716332400 && now <= 1717974000) {
+						emf = 1;
+					}
 				}
 
 				document.getElementById("lat_long").innerText = make_text(lat, lon, acc);
@@ -211,6 +224,15 @@
 				document.getElementById("start").style = "display: none;";
 				document.getElementById("location").style = "display: block";
 				document.getElementById("title").innerText = `All The Maps (${lat}, ${lon})`;
+
+				document.getElementById("emf").href = `https://map.emfcamp.org/#${zoom}/${lat}/${lon}/m=${lat},${lon}`;
+				if (emf) {
+					document.getElementById("emf").style = "";
+					document.getElementById("emf_credits").style = "";
+				} else {
+					document.getElementById("emf").style = "display: none;";
+					document.getElementById("emf_credits").style = "display: none;";
+				}
 
 				document.getElementById("osm").href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=${zoom}&layers=M`;
 
