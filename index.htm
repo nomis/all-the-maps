@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
 	all-the-maps - Links to all the map services for a latitude/longitude location
-	Copyright 2023-2024  Simon Arlott
+	Copyright 2023-2025  Simon Arlott
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,7 @@
 		a.button { color: #000 !important; background-color: #FFF !important; }
 		img.icon_r { padding: 0 0 0 0.5ch; margin: 0; }
 		.emoji { font-size: 64px; vertical-align: bottom; }
+		.emoji_t { margin-left: 0.5ex; display: inline-block; }
 
 		@media (prefers-color-scheme: light) {
 			body { color: #000; background-color: #FFF; }
@@ -80,6 +81,7 @@
 					<li><a id="use" href="javascript:use_location()" style="visibility: hidden">Use location</a></li>
 					<li><a id="retry" href="javascript:geo_restart()" style="visibility: hidden">Retry</a></li>
 					<li><a id="share_loc" href="javascript:share_location()" style="visibility: hidden">Share location<img class="icon_r" src="Material_Design_share.svg" width="16" height="16" alt=""></a></li>
+					<li><a id="copy_loc" href="javascript:copy_location()" style="visibility: hidden">Copy to clipboard<span class="emoji_t"> 📋</span></a></li>
 				</ul>
 			</nav>
 			<p>Location information is only used within your web browser to create links that you distribute.</p>
@@ -335,6 +337,7 @@
 			if (available) {
 				document.getElementById("details").style = "";
 				document.getElementById("use").style = "";
+				document.getElementById("copy_loc").style = "";
 				if (navigator.share) {
 					document.getElementById("share_loc").style = "";
 				}
