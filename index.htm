@@ -80,8 +80,8 @@
 					<li><a href="#" title="Enter location">Manual entry</a></li>
 					<li><a id="use" href="javascript:use_location()" style="visibility: hidden">Use location</a></li>
 					<li><a id="retry" href="javascript:geo_restart()" style="visibility: hidden">Retry</a></li>
-					<li><a id="share_loc" href="javascript:share_location()" style="visibility: hidden">Share location<img class="icon_r" src="Material_Design_share.svg" width="16" height="16" alt=""></a></li>
-					<li><a id="copy_loc" href="javascript:copy_location()" style="visibility: hidden">Copy to clipboard<span class="emoji_t"> 📋</span></a></li>
+					<li><a id="share_loc" href="javascript:geo_share_url()" style="visibility: hidden">Share location<img class="icon_r" src="Material_Design_share.svg" width="16" height="16" alt=""></a></li>
+					<li><a id="copy_loc" href="javascript:geo_copy_url()" style="visibility: hidden">Copy to clipboard<span class="emoji_t"> 📋</span></a></li>
 				</ul>
 			</nav>
 			<p>Location information is only used within your web browser to create links that you distribute.</p>
@@ -276,6 +276,10 @@
 			}
 		}
 
+		function geo_copy_url() {
+			navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${make_hash(true)}`);
+		}
+
 		function copy_url() {
 			navigator.clipboard.writeText(window.location.href);
 		}
@@ -292,7 +296,7 @@
 			}
 		}
 
-		function share_location() {
+		function geo_share_url() {
 			share(`${window.location.origin}${window.location.pathname}#${make_hash(true)}`, make_geo_text());
 		}
 
@@ -484,6 +488,7 @@
 
 			return make_text(lat, lon, acc);
 		}
+
 
 		function use_location() {
 			document.getElementById("input").value = make_hash(false);
